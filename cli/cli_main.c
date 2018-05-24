@@ -41,14 +41,21 @@ main(int argc, char *argv[])
 	socklen_t servlen;
 
 	servlen = sizeof(servaddr);	
+	
+	if( connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) != 0 ){
+		perror("connect error");
+		close(sockfd);
+		exit(-1);
+	}
 	while( (r_byte = read(STDIN_FILENO, getbuff, MAXBUFFSIZE)) ){
 		if( r_byte == MAXBUFFSIZE ){
 			printf("too much data\n");
 		}
 		getbuff[r_byte - 1] = '\0'; 
 		printf("read return getbuff = %s\n",getbuff);
-		n = sendto(sockfd, getbuff, strlen(getbuff), 0
-				, (struct sockaddr *)&servaddr, servlen);
+		//n = sendto(sockfd, getbuff, strlen(getbuff), 0
+		//		, (struct sockaddr *)&servaddr, servlen);
+		n = send(sockfd, getbuff, strlen(getbuff), 0);
 		printf("sendto return n = %d\n",n);
 		if( n < 0 ){
 			perror("sendto error");
